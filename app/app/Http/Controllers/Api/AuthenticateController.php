@@ -202,6 +202,34 @@ class AuthenticateController extends Controller
 
     }
 
+    public function changepassword(Request $request)
+    {
+        $input = $request->all();
+        $rules = array(
+            'cur_pass' => 'required',
+            'new_pass' => 'required',
+        );
+
+        $validator = Validator::make($input, $rules);
+
+        if (!$validator->passes()) {
+            return response()->json(['status' => 0, 'message' => 'Incomplete request', 'error' => $validator->errors()]);
+        }
+
+            $user =User::find(Auth::id());
+
+            if (Hash::check($request->cur_pass, $user->password)) {
+                return response()->json(['status' => 0, 'message' => 'Current password did not match']);
+            }
+
+            $password = Hash::make($request->new_pass);
+            $user->password = $password;
+            $user->passupdate = Carbon::now();
+            $user->save();
+
+            return response()->json(['status' => 1, 'message' => 'Password changed successfully']);
+    }
+
     public function verifycode(Request $request)
     {
         $input = $request->all();
@@ -344,42 +372,6 @@ class AuthenticateController extends Controller
             return response()->json(['status' => 1, 'message' => 'User details generated successfully', 'data' => $users]);
         } else {
             return response()->json(['status' => 0, 'message' => 'Your account has been blocked! Kindly contact support']);
-        }
-    }
-
-    public function updatepin(Request $request)
-    {
-        $input = $request->all();
-        $rules = array(
-            'oldpin' => 'required',
-            'newpin' => 'required',
-        );
-
-        $validator = Validator::make($input, $rules);
-
-        if ($validator->passes()) {
-            $user =User::find(Auth::id());
-
-            if ($user->withdrawpass != $input['oldpin']) {
-                return response()->json(['status' => 0, 'message' => 'Old pin did not match']);
-            }
-
-            $user->withdrawpass = $input['newpin'];
-            $user->save();
-
-            Message::create([
-                'user_id' => $user->id,
-                'title' => 'Pin Changed',
-                'details' => 'New Pin set successfully',
-                'admin' => 1,
-                'status' => 0
-            ]);
-
-            return response()->json(['status' => 1, 'message' => 'Pin set successfully']);
-
-
-        } else {
-            return response()->json(['status' => 0, 'message' => 'Incomplete request', 'error' => $validator->errors()]);
         }
     }
 

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthenticateController;
 use App\Http\Controllers\Api\OtherController;
+use App\Http\Controllers\Api\TradeController;
 use App\Http\Controllers\Api\TransactionController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
@@ -44,8 +45,11 @@ Route::middleware("auth:api")->group(function () {
     Route::get('kyc', [UserController::class, 'kyc']);
     Route::post('kyc', [UserController::class, 'postkyc']);
 
-    Route::get('uploadkyc', [UserController::class, 'postkyc']);
+    Route::post('changepassword', [AuthenticateController::class, 'changepassword']);
 
-    Route::get('deposit_cryto', [OtherController::class, 'depositcrypto']);
+    Route::get('deposit_crypto', [OtherController::class, 'depositcrypto']);
+
+    Route::get('createoffer', [TradeController::class, 'create']);
+    Route::get('createoffer/{id}', [TradeController::class, 'createoffer2']);
 });
 
