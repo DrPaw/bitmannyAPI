@@ -1,0 +1,16 @@
+[06-Aug-2021 13:33:04 Asia/Dhaka] PHP Warning:  Uncaught ErrorException: require(core/app/Http/Helpers/Lib/Mailjet/vendor/autoload.php): failed to open stream: No such file or directory in /home/bitmdqah/public_html/app/app/Http/Helpers/helpers.php:328
+Stack trace:
+#0 /home/bitmdqah/public_html/app/app/Http/Helpers/helpers.php(328): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'require(core/ap...', '/home/bitmdqah/...', 328, Array)
+#1 /home/bitmdqah/public_html/app/app/Http/Helpers/helpers.php(328): require()
+#2 /home/bitmdqah/public_html/app/app/Http/Helpers/helpers.php(201): send_mailjet_mail(Object(stdClass), 'adetunjioluwaka...', 'adetunjioluwaka...', 'help@email.com', NULL, 'Testing MAILJET...', '\r\n<!DOCTYPE htm...')
+#3 /home/bitmdqah/public_html/app/app/Http/Controllers/Admin/EmailTemplateController.php(137): send_general_email('adetunjioluwaka...', 'Testing MAILJET...', '\r\n<!DOCTYPE htm...', 'adetunjioluwaka...')
+#4 [internal function]: App\Http\Controllers\Admin\EmailTemplateController->sendTestMail(Object(Illuminate\Http\Re in /home/bitmdqah/public_html/app/app/Http/Helpers/helpers.php on line 328
+[06-Aug-2021 13:33:04 Asia/Dhaka] PHP Fatal error:  send_mailjet_mail(): Failed opening required 'core/app/Http/Helpers/Lib/Mailjet/vendor/autoload.php' (include_path='.:/opt/alt/php72/usr/share/pear') in /home/bitmdqah/public_html/app/app/Http/Helpers/helpers.php on line 328
+[06-Aug-2021 13:33:56 Asia/Dhaka] PHP Warning:  Uncaught ErrorException: require(core/app/Http/Helpers/Lib/Mailjet/vendor/autoload.php): failed to open stream: No such file or directory in /home/bitmdqah/public_html/app/app/Http/Helpers/helpers.php:328
+Stack trace:
+#0 /home/bitmdqah/public_html/app/app/Http/Helpers/helpers.php(328): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'require(core/ap...', '/home/bitmdqah/...', 328, Array)
+#1 /home/bitmdqah/public_html/app/app/Http/Helpers/helpers.php(328): require()
+#2 /home/bitmdqah/public_html/app/app/Http/Helpers/helpers.php(201): send_mailjet_mail(Object(stdClass), 'adetunjioluwaka...', 'adetunjioluwaka...', 'help@email.com', NULL, 'Testing MAILJET...', '\r\n<!DOCTYPE htm...')
+#3 /home/bitmdqah/public_html/app/app/Http/Controllers/Admin/EmailTemplateController.php(137): send_general_email('adetunjioluwaka...', 'Testing MAILJET...', '\r\n<!DOCTYPE htm...', 'adetunjioluwaka...')
+#4 [internal function]: App\Http\Controllers\Admin\EmailTemplateController->sendTestMail(Object(Illuminate\Http\Re in /home/bitmdqah/public_html/app/app/Http/Helpers/helpers.php on line 328
+[06-Aug-2021 13:33:56 Asia/Dhaka] PHP Fatal error:  send_mailjet_mail(): Failed opening required 'core/app/Http/Helpers/Lib/Mailjet/vendor/autoload.php' (include_path='.:/opt/alt/php72/usr/share/pear') in /home/bitmdqah/public_html/app/app/Http/Helpers/helpers.php on line 328

@@ -1,0 +1,85 @@
+@extends('include.front')
+@section('content')
+
+<section class="section-40 section-md-60 section-lg-90 section-xl-120 bg-gray-dark page-title-wrap overlay-5" style="background-image: url({{asset('front/images/bg-image-4.jpg')}});">
+        <div class="container">
+          <div class="page-title text-center">
+            <h2>Blog Posts</h2>
+          </div>
+        </div>
+      </section>
+
+
+
+       <section class="section-50 section-md-75 section-xl-100">
+        <div class="container">
+          <div class="row justify-content-md-center">
+            <div class="col-xl-10">
+                @foreach($blogs as $data)
+              <article class="post-classic">
+
+                <div class="post-main">
+                  <div class="post-jinfo">
+                    @if(file_exists($data->image))
+                       <img src="{{asset($data->image)}}" alt="" width="50"/>
+
+                    @else
+
+
+                    @endif
+
+                    <h6 class="post-author">Admin</h6>
+                  </div>
+                  <div class="post-body">
+                    <h4><a href="{{route('blogview',$data->id)}}">{{$data->title}}</a></h4>
+                    <p class="text-gray-05">{{substr($data->details, 0, 25)}}....</p>
+                    <div class="post-footer">
+                      <ul class="post-meta">
+                        <li class="object-inline"><span class="icon icon-xxs icon-black material-icons-event"></span>
+                          <time class="text-gray-05" datetime="{{$data->created_at}}">{{ Carbon\Carbon::parse($data->created_at)->diffForHumans() }}</time>
+                        </li>
+                        <li class="object-inline"><span class="icon icon-xxs icon-black material-icons-loyalty"></span>
+                          <ul class="list-tags-inline text-gray-05">
+                            <li><a class="link-gray-05" href="{{route('blogview',$data->id)}}">{{$data->category->name ?? 'View Post'}}</a></li>
+                          </ul>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </article>
+             @endforeach
+             <div class="pagination-custom-wrap text-center">
+                <ul class="pagination-custom">
+                  {{$blogs->links()}}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@endsection
+
+
