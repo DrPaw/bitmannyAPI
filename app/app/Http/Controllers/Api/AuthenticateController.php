@@ -218,7 +218,7 @@ class AuthenticateController extends Controller
 
             $user =User::find(Auth::id());
 
-            if (Hash::check($request->cur_pass, $user->password)) {
+            if (!Hash::check($request->cur_pass, $user->password)) {
                 return response()->json(['status' => 0, 'message' => 'Current password did not match']);
             }
 
