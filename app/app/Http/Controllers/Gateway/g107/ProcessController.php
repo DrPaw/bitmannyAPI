@@ -28,7 +28,6 @@ class ProcessController extends Controller
     }
 
 
-
     public function ipn(Request $request)
     {
 

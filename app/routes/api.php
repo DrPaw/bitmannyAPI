@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthenticateController;
 use App\Http\Controllers\Api\OtherController;
+use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\TradeController;
 use App\Http\Controllers\Api\TransactionController;
 use App\Http\Controllers\Api\UserController;
@@ -60,6 +61,10 @@ Route::middleware("auth:api")->group(function () {
     Route::get('wallet/{id}', [WalletController::class, 'viewaddress']);
     Route::get('sendcoin', [WalletController::class, 'sendfromwallet']);
 
-    Route::post('ngndeposit', [OtherController::class, 'depositInsert']);
+    Route::post('ngndeposit', [PaymentController::class, 'depositInsert']);
+    Route::post('paystackcallback', [PaymentController::class, 'paystackipn']);
+
+    Route::get('cryptodeposit', [PaymentController::class, 'depositcrypto']);
+    Route::post('cryptodeposit', [PaymentController::class, 'depositcryptopost']);
 });
 
