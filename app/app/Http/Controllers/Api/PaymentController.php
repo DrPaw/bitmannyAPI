@@ -8,6 +8,7 @@ use App\Deposit;
 use App\GatewayCurrency;
 use App\GeneralSetting;
 use App\Http\Controllers\Controller;
+use App\UserWallet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -230,19 +231,34 @@ class PaymentController extends Controller
         return response()->json(['status' => 1, 'message' => "Logged successfully", 'data'=>$depo]);
     }
 
-    public function verifypay(Request $request, $id)
+    public function verifycryptodeposit(Request $request)
     {
+        $input = $request->all();
+        $rules = array(
+            'reference' => 'required'
+        );
+
+        $messages = array(
+            'min' => 'Hmm, that looks short.',
+            'max' => 'Oops, that too long.',
+            'alpha_num' => 'Use alphabet or alphabet with numbers to secure your password.');
+
+        $validator = Validator::make($input, $rules, $messages);
+
+        if (!$validator->passes()) {
+            return response()->json(['status' => 0, 'message' => 'Incomplete request', 'error' => $validator->errors()]);
+        }
+
+        $id=$request->reference;
         $general = GeneralSetting::first();
         $trade = Deposit::where('trx', $id)->whereStatus(0)->first();
         if(!$trade){
-            $notify[] = ['error', 'Invalid Transaction'];
-            return back()->withNotify($notify);
+            return response()->json(['status' => 0, 'message' => 'Invalid Transaction']);
         }
 
         $currency = Currency::where('symbol', $trade->method_currency)->first();
         if(!$currency){
-            $notify[] = ['error', 'Invalid Currency'];
-            return back()->withNotify($notify);
+            return response()->json(['status' => 0, 'message' => 'Invalid Currency']);
         }
 
         $baseurl = "https://coinremitter.com/api/v3/".$currency->symbol."/get-invoice";
@@ -267,29 +283,23 @@ class PaymentController extends Controller
         //return $reply['data']['status_code'];
 
         if (!isset($reply['data']['status_code'])){
-            $notify[] = ['error', 'An error occur. Contact server admin'];
-            return back()->withNotify($notify);
+            return response()->json(['status' => 0, 'message' => 'An error occur. Contact server admin']);
         }
 
         if($reply['data']['status'] == "Expired"){
 
             $trade->status= 2;
             $trade->save();
-            $request->session()->forget('Track');
-            $notify[] = ['error', 'This Transaction Has Expired. It appeared that you didnt send any bitcoin before transaction expired'];
-            return redirect()->route('user.depositcrypto')->withNotify($notify);
+            return response()->json(['status' => 0, 'message' => 'This Transaction Has Expired. It appeared that you didnt send any bitcoin before transaction expired']);
         }
         if($reply['data']['status'] == "Pending"){
-            $notify[] = ['error', 'We have not received your payment. Kindly Scan The QR code or copy Wallet Address to make payment'];
-            return back()->withNotify($notify);
-
+            return response()->json(['status' => 0, 'message' => 'We have not received your payment. Kindly Scan The QR code or copy Wallet Address to make payment']);
         }
 
         $status = $reply['data']['status_code'];
 
         if($status==0){
-            $notify[] = ['error', 'We have not received your payment. Kindly Scan The QR code or copy Wallet Address to make payment'];
-            return back()->withNotify($notify);
+            return response()->json(['status' => 0, 'message' => 'We have not received your payment. Kindly Scan The QR code or copy Wallet Address to make payment']);
         }
 
 
@@ -302,14 +312,11 @@ class PaymentController extends Controller
 
                 $trade->status= 1;
                 $trade->save();
-                $request->session()->forget('Track');
-                $notify[] = ['success', 'Deposit Successful'];
-                return redirect()->route('user.deposit.crypto')->withNotify($notify);
+                return response()->json(['status' => 1, 'message' => 'Deposit Successful']);
             }
             else
             {
-                $notify[] = ['success', 'Transaction Processed'];
-                return back()->withNotify($notify);
+                return response()->json(['status' => 1, 'message' => 'Transaction Processed']);
             }
 
         }

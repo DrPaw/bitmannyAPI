@@ -66,5 +66,6 @@ Route::middleware("auth:api")->group(function () {
 
     Route::get('cryptodeposit', [PaymentController::class, 'depositcrypto']);
     Route::post('cryptodeposit', [PaymentController::class, 'depositcryptopost']);
+    Route::post('verifycryptodeposit', [PaymentController::class, 'verifycryptodeposit']);
 });
 
