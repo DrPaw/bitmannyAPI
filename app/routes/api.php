@@ -52,8 +52,10 @@ Route::middleware("auth:api")->group(function () {
     Route::get('deposit_crypto', [OtherController::class, 'depositcrypto']);
 
     Route::get('createoffer', [TradeController::class, 'create']);
-    Route::get('createoffer/{id}', [TradeController::class, 'createoffer2']);
     Route::post('createoffer', [TradeController::class, 'postoffer']);
+    Route::get('myoffers', [TradeController::class, 'myoffers']);
+    Route::get('offersparams', [TradeController::class, 'offersparams']);
+    Route::post('fetchmarket', [TradeController::class, 'fetchmarket']);
 
 
     Route::post('createwallet', [WalletController::class, 'createwallet']);
