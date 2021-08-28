@@ -36,9 +36,10 @@ class TradeController extends Controller
     }
 
 
-    public function postoffer(Request $request, $id)
+    public function postoffer(Request $request)
     {
         $this->validate($request, [
+            'id' => 'required',
             'pmethod' => 'required',
             'account' => 'required',
             'note' => 'required',

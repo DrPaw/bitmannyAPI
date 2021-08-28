@@ -396,13 +396,13 @@ class WalletController extends Controller
         $fromunit = $total/$from->price;
         $tounit = $total/$to->price;
         $tounit =  number_format($tounit,8);
-        
+
         $get = $tounit + $towallet->balance;
         $getunit = number_format($get,8);
-        
-        
+
+
        //return $getunit;
-       
+
 
 
         if ($totalunit > $fromwallet->balance) {
@@ -411,7 +411,7 @@ class WalletController extends Controller
         }
          else {
 
-         
+
 
 
             $fromwallet->balance -= number_format($totalunit,8);

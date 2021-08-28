@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\OtherController;
 use App\Http\Controllers\Api\TradeController;
 use App\Http\Controllers\Api\TransactionController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\WalletController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -51,5 +52,14 @@ Route::middleware("auth:api")->group(function () {
 
     Route::get('createoffer', [TradeController::class, 'create']);
     Route::get('createoffer/{id}', [TradeController::class, 'createoffer2']);
+    Route::post('createoffer', [TradeController::class, 'postoffer']);
+
+
+    Route::post('createwallet', [WalletController::class, 'createwallet']);
+    Route::get('wallets/{id}', [WalletController::class, 'wallet']);
+    Route::get('wallet/{id}', [WalletController::class, 'viewaddress']);
+    Route::get('sendcoin', [WalletController::class, 'sendfromwallet']);
+
+    Route::post('ngndeposit', [OtherController::class, 'depositInsert']);
 });
 
