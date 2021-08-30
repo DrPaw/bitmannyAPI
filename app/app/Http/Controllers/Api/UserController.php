@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\CommissionLog;
 use App\Currency;
 use App\Deposit;
 use App\Http\Controllers\Controller;
@@ -126,6 +127,14 @@ class UserController extends Controller
         return response()->json(['status' => 1, 'message' => 'KYC Submited successfully.']);
 
     }
+
+    public function referrallogs()
+    {
+        $data['follower']  = User::whereRefer(Auth::id())->get();
+        $data['trans'] = CommissionLog::with('user', 'bywho')->where('user_id', Auth::id())->latest()->get();
+        return response()->json(['status' => 1, 'message' => 'Fetched successfully', 'data' => $data]);
+    }
+
 
 
 }

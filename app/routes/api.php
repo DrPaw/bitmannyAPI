@@ -74,5 +74,8 @@ Route::middleware("auth:api")->group(function () {
 
 
     Route::get('withdraw', [WithdrawalController::class, 'withdraw']);
+    Route::post('withdraw', [WithdrawalController::class, 'withdrawMoney']);
+
+    Route::get('referrallogs', [UserController::class, 'referrallogs']);
 });
 
