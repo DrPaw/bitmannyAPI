@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\TradeController;
 use App\Http\Controllers\Api\TransactionController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\WalletController;
+use App\Http\Controllers\Api\WithdrawalController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -59,6 +60,7 @@ Route::middleware("auth:api")->group(function () {
 
 
     Route::post('createwallet', [WalletController::class, 'createwallet']);
+    Route::get('wallets', [WalletController::class, 'wallets']);
     Route::get('wallets/{id}', [WalletController::class, 'wallet']);
     Route::get('wallet/{id}', [WalletController::class, 'viewaddress']);
     Route::get('sendcoin', [WalletController::class, 'sendfromwallet']);
@@ -69,5 +71,8 @@ Route::middleware("auth:api")->group(function () {
     Route::get('cryptodeposit', [PaymentController::class, 'depositcrypto']);
     Route::post('cryptodeposit', [PaymentController::class, 'depositcryptopost']);
     Route::post('verifycryptodeposit', [PaymentController::class, 'verifycryptodeposit']);
+
+
+    Route::get('withdraw', [WithdrawalController::class, 'withdraw']);
 });
 
