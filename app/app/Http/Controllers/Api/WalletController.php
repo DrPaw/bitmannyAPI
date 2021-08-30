@@ -77,6 +77,13 @@ class WalletController extends Controller
         }
     }
 
+    public function wallets()
+    {
+        $data['wallets'] = Cryptowallet::join("currencies", "cryptowallets.coin_id", "=", "currencies.id")->where([['cryptowallets.user_id', auth()->id()], ['cryptowallets.status', 1],])->select("cryptowallets.*", "currencies.name", "currencies.symbol" )->get();
+
+        return response()->json(['status' => 1, 'message' => 'Fetched successfully', 'data' =>$data]);
+    }
+
     public function wallet($id)
     {
         $currency = Currency::where('status', '!=', 0)->whereCanwallet(1)->whereSymbol($id)->first();
