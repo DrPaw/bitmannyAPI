@@ -13,6 +13,14 @@ use Illuminate\Support\Facades\Validator;
 
 class WalletController extends Controller
 {
+
+    public function createwalletget()
+    {
+        $data['wallets'] = Currency::where('status', 1)->get();
+
+        return response()->json(['status' => 1, 'message' => 'Fetched successfully', 'data' =>$data]);
+    }
+
     public function createwallet(Request $request)
     {
         $input = $request->all();

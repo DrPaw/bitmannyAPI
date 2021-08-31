@@ -68,6 +68,7 @@ Route::middleware("auth:api")->group(function () {
     Route::get('manageoffer/{code}', [TradeController::class, 'manageofferbuy']);
 
 
+    Route::get('createwallet', [WalletController::class, 'createwalletget']);
     Route::post('createwallet', [WalletController::class, 'createwallet']);
     Route::get('wallets', [WalletController::class, 'wallets']);
     Route::get('wallets/{id}', [WalletController::class, 'wallet']);
