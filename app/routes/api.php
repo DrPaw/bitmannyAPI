@@ -37,6 +37,8 @@ Route::middleware("guest")->group(function () {
 });
 
 Route::middleware("auth:api")->group(function () {
+    Route::post('biometriclogin', [AuthenticateController::class, 'loginonetime']);
+
     Route::get('dashboard', [UserController::class, 'dashboard']);
 
     Route::get('swappable', [TransactionController::class, 'swappable']);
@@ -48,6 +50,8 @@ Route::middleware("auth:api")->group(function () {
     Route::get('kyc', [UserController::class, 'kyc']);
     Route::post('kyc', [UserController::class, 'postkyc']);
 
+    Route::post('updateaccount', [UserController::class, 'submitProfile']);
+
     Route::post('changepassword', [AuthenticateController::class, 'changepassword']);
 
     Route::get('deposit_crypto', [OtherController::class, 'depositcrypto']);
@@ -57,6 +61,11 @@ Route::middleware("auth:api")->group(function () {
     Route::get('myoffers', [TradeController::class, 'myoffers']);
     Route::get('offersparams', [TradeController::class, 'offersparams']);
     Route::post('fetchmarket', [TradeController::class, 'fetchmarket']);
+    Route::get('activateoffer/{code}', [TradeController::class, 'activateoffer']);
+    Route::get('disableoffer/{code}', [TradeController::class, 'disableoffer']);
+    Route::get('deleteoffer/{code}', [TradeController::class, 'deleteoffer']);
+    Route::get('takeoffer', [TradeController::class, 'contactseller']);
+    Route::get('manageoffer/{code}', [TradeController::class, 'manageofferbuy']);
 
 
     Route::post('createwallet', [WalletController::class, 'createwallet']);

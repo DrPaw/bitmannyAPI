@@ -135,6 +135,46 @@ class UserController extends Controller
         return response()->json(['status' => 1, 'message' => 'Fetched successfully', 'data' => $data]);
     }
 
+    public function submitProfile(Request $request)
+    {
+        $input = $request->all();
+        $rules = array(
+            'firstname' => 'required|string|max:50',
+            'lastname' => 'required|string|max:50',
+            'address' => "required|max:80",
+            'state' => 'required|max:80',
+            'zip' => 'required|max:40',
+            'city' => 'required|max:50',
+            'country' => 'required|string|max:50',
+        );
+
+        $validator = Validator::make($input, $rules);
+
+        if (!$validator->passes()) {
+            return response()->json(['status' => 0, 'message' => 'incomplete request', 'error' => $validator->errors()]);
+        }
+
+        $user = User::find(Auth::id());
+
+        if(!$user){
+            return response()->json(['status' => 0, 'message' => 'Invalid User']);
+        }
+
+        $in['firstname'] = $request->firstname;
+        $in['lastname'] = $request->lastname;
+
+        $in['address'] = [
+            'address' => $request->address,
+            'state' => $request->state,
+            'zip' => $request->zip,
+            'country' => $request->country,
+            'city' => $request->city,
+        ];
+
+        $user->fill($in)->save();
+        return response()->json(['status' => 1, 'message' => 'Profile Updated successfully.']);
+    }
+
 
 
 }

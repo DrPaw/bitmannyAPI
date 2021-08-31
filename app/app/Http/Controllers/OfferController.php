@@ -352,15 +352,15 @@ class OfferController extends Controller
 
 
 
-           if($request->amount > $data['offer']->max){
-             $notify[] = ['error', 'You cant buy more than the market cap of $'.$data['offer'] ->max];
-             return back()->withNotify($notify)->withInput();
-            }
-
-            if($request->amount < $data['offer']->min){
-             $notify[] = ['error', 'You cant buy below the set market cap of $'.$data['offer'] ->min];
-             return back()->withNotify($notify)->withInput();
-            }
+//           if($request->amount > $data['offer']->max){
+//             $notify[] = ['error', 'You cant buy more than the market cap of $'.$data['offer'] ->max];
+//             return back()->withNotify($notify)->withInput();
+//            }
+//
+//            if($request->amount < $data['offer']->min){
+//             $notify[] = ['error', 'You cant buy below the set market cap of $'.$data['offer'] ->min];
+//             return back()->withNotify($notify)->withInput();
+//            }
 
 
 

@@ -202,6 +202,90 @@ class AuthenticateController extends Controller
 
     }
 
+    public function loginonetime(Request $request)
+    {
+        $input = $request->all();
+        $rules = array(
+            'pin' => 'required',
+        );
+
+        $validator = Validator::make($input, $rules);
+
+        if ($validator->passes()) {
+            $user = User::find(Auth::id());
+
+            if ($input['pin'] != "biometrics") {
+                return response()->json(['status' => 0, 'message' => 'Unable to login']);
+            }
+
+
+            $user = Auth::user();
+            $token = Str::random(60);
+
+            $user = auth()->user();
+            $user->tv = $user->ts == 1 ? 0 : 1;
+            $user->save();
+
+            $baseUrl = "http://www.geoplugin.net/";
+            $endpoint = "json.gp?ip=" . request()->ip()."";
+            $httpVerb = "GET";
+            $contentType = "application/json"; //e.g charset=utf-8
+            $headers = array (
+                "Content-Type: $contentType",
+
+            );
+
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($ch, CURLOPT_URL, $baseUrl.$endpoint);
+            curl_setopt($ch, CURLOPT_HTTPGET, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+            $content = json_decode(curl_exec( $ch ),true);
+            $err     = curl_errno( $ch );
+            $errmsg  = curl_error( $ch );
+            curl_close($ch);
+
+
+            $conti = $content['geoplugin_continentName'];
+            $country = $content['geoplugin_countryName'];
+            $city = $content['geoplugin_city'];
+            $area = $content['geoplugin_areaCode'];
+            $code = $content['geoplugin_countryCode'];
+            $long = $content['geoplugin_longitude'];
+            $lat = $content['geoplugin_latitude'];
+
+            $info = json_decode(json_encode(getIpInfo()), true);
+            $ul['user_id'] = $user->id;
+            $ul['user_ip'] =  request()->ip();
+            $ul['long'] =  $long;
+            $ul['lat'] =  $lat;
+            $ul['location'] =  $city . $area . $country . $code;
+            $ul['country_code'] = $code;
+            $ul['browser'] = "Biometric Login: " . $info['browser'];
+            $ul['os'] = $info['os_platform'];
+            $ul['country'] =  $country;
+            UserLogin::create($ul);
+
+
+            $request->user()->forceFill([
+                'api_token' => $token,
+            ])->save();
+
+            $hour = date('H');
+            $dayTerm = ($hour > 17) ? "Evening" : (($hour > 12) ? "Afternoon" : "Morning");
+            $greet = "Good " . $dayTerm;
+
+            $wallet = UserWallet::where([['type', 'deposit_wallet'], ['user_id', Auth::id()]])->first();
+
+            return response()->json(['status' => 1, 'message' => "User authenticated successfully", 'token' => $token, 'balance' => $wallet->balance, 'first_name' => $user->firstname, 'last_name' => $user->lastname, 'user_name' => $user->username, 'image' => $user->image, 'phone' => $user->mobile, 'email' => $user->email, 'greet' => $greet]);
+
+        } else {
+            return response()->json(['status' => 0, 'message' => 'Incomplete request', 'error' => $validator->errors()]);
+        }
+    }
+
     public function changepassword(Request $request)
     {
         $input = $request->all();
@@ -372,52 +456,6 @@ class AuthenticateController extends Controller
             return response()->json(['status' => 1, 'message' => 'User details generated successfully', 'data' => $users]);
         } else {
             return response()->json(['status' => 0, 'message' => 'Your account has been blocked! Kindly contact support']);
-        }
-    }
-
-    public function loginonetime(Request $request)
-    {
-        $input = $request->all();
-        $rules = array(
-            'pin' => 'required',
-        );
-
-        $validator = Validator::make($input, $rules);
-
-        if ($validator->passes()) {
-            $user = User::find(Auth::id());
-
-            if (!isset($input['type'])) {
-                if ($user->withdrawpass != $input['pin']) {
-                    return response()->json(['status' => 0, 'message' => 'Withdrawal pin did not match']);
-                }
-
-            } else {
-                if ($input['type'] != "biometrics") {
-                    return response()->json(['status' => 0, 'message' => 'Unable to login']);
-                }
-            }
-
-            $token = Str::random(60);
-
-            $user->forceFill([
-                'api_token' => $token,
-            ])->save();
-
-            $noti = Message::where([['user_id', Auth::id()], ['status', 0]])->orderBy('id', 'desc')->exists();
-
-            if ($user->locked == 1) {
-                return response()->json(['status' => 0, 'message' => 'Account has been locked for maximum pin attempt. Kindly contact support']);
-            }
-
-            $hour = date('H');
-            $dayTerm = ($hour > 17) ? "Evening" : (($hour > 12) ? "Afternoon" : "Morning");
-            $greet = "Good " . $dayTerm;
-
-            return response()->json(['status' => 1, 'message' => "Login successfully", 'token' => $token, 'balance' => round($user->balance, 2), 'first_name' => $user->fname, 'last_name' => $user->lname, 'user_name' => $user->username, 'image' => $user->image, 'phone' => $user->phone, 'email' => $user->email, 'account_number' => $user->account_number, 'pin' => $user->withdrawpass, 'verified' => $user->verified, 'notification' => $noti, 'greet' => $greet]);
-
-        } else {
-            return response()->json(['status' => 0, 'message' => 'Incomplete request', 'error' => $validator->errors()]);
         }
     }
 

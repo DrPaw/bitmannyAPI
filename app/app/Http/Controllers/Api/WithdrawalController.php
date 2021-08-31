@@ -10,6 +10,7 @@ use App\Withdrawal;
 use App\WithdrawMethod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class WithdrawalController extends Controller
 {
@@ -22,11 +23,19 @@ class WithdrawalController extends Controller
 
     public function withdrawMoney(Request $request)
     {
-        $this->validate($request, [
+        $input = $request->all();
+        $rules = array(
             'method_code' => 'required',
             'amount' => 'required|numeric',
             'details' => 'required'
-        ]);
+        );
+
+        $validator = Validator::make($input, $rules);
+
+        if (!$validator->passes()) {
+            return response()->json(['status' => 0, 'message' => 'incomplete request', 'error' => $validator->errors()]);
+        }
+
         $method = WithdrawMethod::where('id', $request->method_code)->where('status', 1)->first();
 
         if(!$method){
@@ -108,8 +117,6 @@ class WithdrawalController extends Controller
 
     public function withdrawLog()
     {
-
-        $data['page_title'] = "Withdraw Log";
         $data['withdraws'] = Withdrawal::where('user_id', Auth::id())->where('status', '!=', -1)->latest()->get();
         return view('user.withdraw.log', $data);
     }
