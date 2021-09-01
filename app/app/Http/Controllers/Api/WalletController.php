@@ -169,7 +169,7 @@ class WalletController extends Controller
 //        curl_close($curl);
         //return $response;
 
-        $data['trx'] = Cryptotrx::where('user_id', auth()->id())->whereCoin_id($currency->id)->take(5)->latest()->get();
+        $data['trx'] = Cryptotrx::where('user_id', auth()->id())->where('address', $id)->take(5)->latest()->get();
         $data['sent_trx'] = Cryptotrx::where('user_id', auth()->id())->where('address', $id)->orderby('id','desc')->where('type', 'send')->get();
         $data['received_trx'] = Cryptotrx::where('user_id', auth()->id())->where('address', $id)->orderby('id','desc')->whereType('receive')->get();
         //$trx = $reply['data'];
