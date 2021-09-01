@@ -150,34 +150,35 @@ class WalletController extends Controller
             return response()->json(['status' => 0, 'message' => 'Invalid Currency or Currency Not Found']);
         }
 
-        $baseurl = "https://coinremitter.com/api/v3/".$currency->symbol."/get-transaction-by-address";
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => $baseurl,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => array('api_key' => $currency->apikey,'password' => $currency->apipass,'address' => $wallet->address),
-        ));
-
-        $response = curl_exec($curl);
-        $reply = json_decode($response,true);
-        curl_close($curl);
+//        $baseurl = "https://coinremitter.com/api/v3/".$currency->symbol."/get-transaction-by-address";
+//        $curl = curl_init();
+//        curl_setopt_array($curl, array(
+//            CURLOPT_URL => $baseurl,
+//            CURLOPT_RETURNTRANSFER => true,
+//            CURLOPT_ENCODING => '',
+//            CURLOPT_MAXREDIRS => 10,
+//            CURLOPT_TIMEOUT => 0,
+//            CURLOPT_FOLLOWLOCATION => true,
+//            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+//            CURLOPT_CUSTOMREQUEST => 'POST',
+//            CURLOPT_POSTFIELDS => array('api_key' => $currency->apikey,'password' => $currency->apipass,'address' => $wallet->address),
+//        ));
+//
+//        $response = curl_exec($curl);
+//        $reply = json_decode($response,true);
+//        curl_close($curl);
         //return $response;
 
-        $data['sent'] = Cryptotrx::where('user_id', auth()->id())->where('address', $id)->orderby('id','desc')->where('type', 'send')->get();
-        $data['received'] = Cryptotrx::where('user_id', auth()->id())->where('address', $id)->orderby('id','desc')->whereType('receive')->get();
+        $data['trx'] = Cryptotrx::where('user_id', auth()->id())->whereCoin_id($currency->id)->take(5)->latest()->get();
+        $data['sent_trx'] = Cryptotrx::where('user_id', auth()->id())->where('address', $id)->orderby('id','desc')->where('type', 'send')->get();
+        $data['received_trx'] = Cryptotrx::where('user_id', auth()->id())->where('address', $id)->orderby('id','desc')->whereType('receive')->get();
         //$trx = $reply['data'];
-        $data['tsent'] = Cryptotrx::where('user_id', auth()->id())->where('address', $id)->orderby('id','desc')->where('type', 'send')->sum('usd');
-        $data['tsentunit'] = Cryptotrx::where('user_id', auth()->id())->where('address', $id)->orderby('id','desc')->where('type', 'send')->sum('amount');
-        $data['trec'] = Cryptotrx::where('user_id', auth()->id())->where('address', $id)->orderby('id','desc')->whereType('receive')->sum('usd');
-        $data['trecunit'] = Cryptotrx::where('user_id', auth()->id())->where('address', $id)->orderby('id','desc')->whereType('receive')->sum('amount');
-        $data['total'] = Cryptotrx::where('user_id', auth()->id())->where('address', $id)->orderby('id','desc')->sum('usd');
-        $data['totalunit'] = Cryptotrx::where('user_id', auth()->id())->where('address', $id)->orderby('id','desc')->sum('amount');
+        $data['tsent_usd_sum'] = Cryptotrx::where('user_id', auth()->id())->where('address', $id)->orderby('id','desc')->where('type', 'send')->sum('usd');
+        $data['tsent_amount_sum'] = Cryptotrx::where('user_id', auth()->id())->where('address', $id)->orderby('id','desc')->where('type', 'send')->sum('amount');
+        $data['trec_usd_sum'] = Cryptotrx::where('user_id', auth()->id())->where('address', $id)->orderby('id','desc')->whereType('receive')->sum('usd');
+        $data['trec_amount_sum'] = Cryptotrx::where('user_id', auth()->id())->where('address', $id)->orderby('id','desc')->whereType('receive')->sum('amount');
+        $data['balance_usd'] = Cryptotrx::where('user_id', auth()->id())->where('address', $id)->orderby('id','desc')->sum('usd');
+        $data['balance_amount'] = Cryptotrx::where('user_id', auth()->id())->where('address', $id)->orderby('id','desc')->sum('amount');
 
         return response()->json(['status' => 1, 'message' => 'Fetched successfully', 'data'=>$data]);
 
