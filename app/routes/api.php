@@ -73,7 +73,7 @@ Route::middleware("auth:api")->group(function () {
     Route::get('wallets', [WalletController::class, 'wallets']);
     Route::get('wallets/{id}', [WalletController::class, 'wallet']);
     Route::get('wallet/{id}', [WalletController::class, 'viewaddress']);
-    Route::get('sendcoin', [WalletController::class, 'sendfromwallet']);
+    Route::post('sendcoin', [WalletController::class, 'sendfromwallet']);
 
     Route::post('ngndeposit', [PaymentController::class, 'depositInsert']);
     Route::post('paystackcallback', [PaymentController::class, 'paystackipn']);
